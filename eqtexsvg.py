@@ -544,6 +544,9 @@ class InsertEquation(inkex.Effect):
             inkex.debug('No Equation was generated\n')
 
 
-if __name__ == "__main__":
+def main():
     EFFECT = InsertEquation()
     EFFECT.affect()
+
+if __name__ == "__main__":
+    main()
