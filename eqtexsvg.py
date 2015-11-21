@@ -42,6 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import os
 import logging
 import optparse
+import six
 
 LOG = os.path.join(os.path.expanduser('~'), 'eqtexsvg.log')
 logging.basicConfig(filename=LOG,
@@ -73,14 +74,22 @@ except ImportError:
 import sys
 import tempfile
 from subprocess import Popen, PIPE
-from StringIO import StringIO
 import platform
 
+if six.PY2:
+    from StringIO import StringIO
+elif six.PY3:
+    from io import StringIO
+
+
+def clean(output):
+    if six.PY3:
+        output = output.decode('utf8')
+    return '\n'.join([l for l in output.split('\n') if l != ""])
 
 def exec_cmd(cmd_line=None, debug=True):
     """Launch given command line (and report in log if debug)"""
 
-    clean = lambda x: '\n'.join([l for l in x.split('\n') if l != ""])
 
     process = Popen(cmd_line, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
 
@@ -194,7 +203,7 @@ class Equation:
                 if self.debug:
                     logging.debug(program_name + " not OK")
 
-        except OSError, err:
+        except OSError as err:
             if self.debug:
                 logging.debug(program_name + " failed: " + err)
             sys.stderr.write(program_name + " failed:" + err)
