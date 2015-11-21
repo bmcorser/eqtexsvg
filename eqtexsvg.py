@@ -512,12 +512,17 @@ class InsertEquation(inkex.Effect):
     def effect(self):
         """Generate inline Equation"""
 
+        # normalise the output path if needed
+        output = self.options.output
+        if output[0] != '/':
+            output = os.path.join(os.getcwd(), output)
+
         param = {
             'formula':  self.options.formula,
             'document': getattr(self, 'document', None),
             'packages': self.options.packages,
             'debug':    self.options.debug,
-            'output':   self.options.output,
+            'output':   output,
         }
 
         debug = self.options.debug
